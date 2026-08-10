@@ -1,0 +1,534 @@
+<style>
+  :root{
+    --violet:#6C4CF1;
+    --violet-dark:#5A3CE0;
+    --violet-light:#F1EDFE;
+    --violet-line:#DDD4FB;
+    --bg:#F7F7FB;
+    --card:#FFFFFF;
+    --border:#E7E7EF;
+    --text:#16161F;
+    --text-soft:#767689;
+    --text-faint:#A6A6B5;
+    --green:#1E8E5A;
+    --green-bg:#EAF7F0;
+    --mono: 'SFMono-Regular', Consolas, 'JetBrains Mono', monospace;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  *{ box-sizing:border-box; }
+  #moonai-root{
+    font-family: var(--sans); background: var(--bg); color: var(--text);
+    min-height:100%; -webkit-font-smoothing:antialiased;
+  }
+  .shell{ max-width: 920px; margin:0 auto; padding: 24px 20px 60px; }
+
+  .pagehead{ margin-bottom: 20px; }
+  .pagehead h1{ font-size:22px; font-weight:700; margin:0 0 4px; display:flex; align-items:center; gap:8px; }
+  .pagehead .sub{ font-size:13.5px; color:var(--text-soft); }
+  .pill-help{ width:16px;height:16px;border-radius:50%; border:1.4px solid var(--text-faint); color:var(--text-faint); font-size:11px; display:inline-flex; align-items:center; justify-content:center; }
+
+  .card{ background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px 22px 20px; box-shadow: 0 1px 2px rgba(20,20,40,0.03); }
+  .card + .card{ margin-top:18px; }
+
+  .label-row{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:4px; }
+  .field-label{ font-size:14px; font-weight:600; color:var(--text); }
+  .fill-example{ flex-shrink:0; font-size:12px; font-weight:600; color: var(--violet-dark); background: var(--violet-light); border: 1px solid var(--violet-line); padding: 5px 10px; border-radius: 7px; cursor:pointer; white-space:nowrap; }
+  .fill-example:hover{ background: var(--violet-line); }
+  .field-hint{ font-size:12.5px; color:var(--text-soft); margin-bottom:12px; line-height:1.5; }
+  .micro-hint{ font-size:11.5px; color:var(--text-faint); margin:-6px 0 12px; line-height:1.4; }
+
+  .name-input{ margin-bottom: 12px; }
+  .name-input label{ display:block; font-size:12px; font-weight:600; color:var(--text-soft); margin-bottom:5px; }
+
+  .chiprow{ display:flex; flex-wrap:wrap; gap:7px; margin-bottom:12px; }
+  .chip{ display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border); background:#fff; padding:6px 11px 6px 8px; border-radius:999px; font-size:12px; color: var(--text-soft); cursor:pointer; user-select:none; transition: background .12s ease, border-color .12s ease, color .12s ease; }
+  .chip .box{ width:14px; height:14px; border-radius:4px; border:1.4px solid var(--text-faint); display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .chip .box svg{ width:9px; height:9px; opacity:0; }
+  .chip.checked{ background: var(--violet-light); border-color: var(--violet-line); color: var(--violet-dark); font-weight:600; }
+  .chip.checked .box{ background: var(--violet); border-color: var(--violet); }
+  .chip.checked .box svg{ opacity:1; }
+
+  .progress-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+  .progress-label{ font-size:12.5px; color:var(--text-soft); font-weight:500; }
+  .progress-track{ flex:1; height:6px; background:var(--border); border-radius:4px; margin:0 14px; overflow:hidden; }
+  .progress-fill{ height:100%; background: linear-gradient(90deg, var(--violet), #9B7CFF); border-radius:4px; transition: width .25s ease; }
+  .progress-count{ font-size:12.5px; color:var(--text-faint); font-variant-numeric: tabular-nums; }
+
+  textarea, input[type=text]{ width:100%; background:#FBFBFD; border:1px solid var(--border); border-radius:10px; padding:12px 13px; font-family: var(--sans); font-size:14px; color:var(--text); line-height:1.55; outline:none; transition: border-color .15s ease, background .15s ease; }
+  textarea{ min-height:104px; resize:vertical; }
+  textarea:focus, input[type=text]:focus{ border-color: var(--violet); background:#FFFFFF; }
+  textarea::placeholder, input::placeholder{ color: var(--text-faint); }
+
+  .nav{ display:flex; justify-content:space-between; align-items:center; margin-top:18px; }
+  .btnrow{ display:flex; gap:10px; flex-wrap:wrap; }
+
+  button{ font-family: var(--sans); font-size:13.5px; font-weight:600; border-radius:9px; padding:10px 16px; cursor:pointer; border:1px solid transparent; display:inline-flex; align-items:center; gap:7px; transition: opacity .15s ease, transform .08s ease; }
+  button:active{ transform: scale(0.98); }
+  button:disabled{ opacity:.35; cursor:not-allowed; }
+  .btn-primary{ background: var(--violet); color:#fff; }
+  .btn-primary:hover:not(:disabled){ background: var(--violet-dark); }
+  .btn-outline{ background:#fff; color:var(--text); border-color:var(--border); }
+  .btn-outline:hover:not(:disabled){ border-color: var(--text-faint); }
+  .btn-text{ background:transparent; color:var(--text-soft); padding:10px 8px; }
+  .sparkle{ width:14px; height:14px; flex-shrink:0; }
+
+  .answered-list{ margin-top:2px; }
+  .answered-item{ padding:10px 0; border-bottom:1px solid var(--border); }
+  .answered-item:last-child{ border-bottom:none; }
+  .answered-item .k{ font-size:12px; color:var(--text-soft); font-weight:600; margin-bottom:3px; }
+  .answered-item .v{ font-size:13.5px; color:var(--text); line-height:1.5; }
+  .answered-item .v.placeholder{ color: var(--text-faint); font-style:italic; }
+
+  .badge-status{ display:inline-flex; align-items:center; gap:5px; background:var(--green-bg); color:var(--green); font-size:12px; font-weight:600; padding:4px 10px; border-radius:999px; }
+  .badge-status .dot{ width:6px;height:6px;border-radius:50%; background:var(--green); }
+
+  .final-output{ width:100%; background:#FBFBFD; border:1px solid var(--border); border-radius:10px; padding:16px; font-family: var(--mono); font-size:12.5px; line-height:1.65; white-space:pre-wrap; max-height:460px; overflow-y:auto; color: var(--text); }
+  .final-output::-webkit-scrollbar{ width:6px; }
+  .final-output::-webkit-scrollbar-thumb{ background:#D9D9E6; border-radius:3px; }
+  .copied-flag{ font-size:12px; color: var(--violet-dark); font-weight:600; }
+  .note{ font-size:12px; color: var(--text-faint); margin-top:12px; line-height:1.6; }
+  .section-title{ font-size:15px; font-weight:700; margin:0 0 2px; }
+  .section-sub{ font-size:12.5px; color: var(--text-soft); margin-bottom:16px; }
+
+  .result-tabs{ display:inline-flex; gap:3px; background: var(--border); padding:3px; border-radius:10px; margin-bottom:18px; }
+  .result-tab{ padding:8px 15px; border-radius:8px; font-size:13px; font-weight:600; color:var(--text-soft); cursor:pointer; user-select:none; }
+  .result-tab.active{ background:#fff; color:var(--text); box-shadow:0 1px 2px rgba(0,0,0,0.06); }
+
+  .func-toprow{ display:grid; grid-template-columns:1fr; gap:14px; margin-bottom:18px; }
+  @media(min-width:640px){ .func-toprow{ grid-template-columns: 1fr 1fr; } }
+  .func-field label{ display:block; font-size:12px; font-weight:600; color:var(--text-soft); margin-bottom:6px; }
+  .func-static{ background:#FBFBFD; border:1px solid var(--border); border-radius:9px; padding:10px 12px; font-size:13.5px; font-family: var(--mono); color: var(--text); }
+  .func-static.desc{ white-space:pre-wrap; line-height:1.5; font-family: var(--sans); }
+
+  .status-row{ display:flex; align-items:center; gap:10px; margin-bottom: 18px; }
+  .toggle-fake{ width:34px; height:19px; border-radius:999px; background: var(--violet); position:relative; flex-shrink:0; }
+  .toggle-fake::after{ content:""; position:absolute; right:2px; top:2px; width:15px; height:15px; border-radius:50%; background:#fff; }
+  .status-row .lbl{ font-size:13px; font-weight:600; }
+
+  .param-card{ border:1px solid var(--border); border-radius:11px; padding:14px 14px 12px; margin-bottom:10px; background:#FBFBFD; }
+  .param-grid{ display:grid; grid-template-columns: 1fr; gap:10px; }
+  @media(min-width:640px){ .param-grid{ grid-template-columns: 0.9fr 0.7fr 1.4fr; } }
+  .param-field label{ display:block; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; color:var(--text-faint); margin-bottom:4px; }
+  .param-value{ font-size:13px; background:#fff; border:1px solid var(--border); border-radius:7px; padding:8px 10px; color:var(--text); font-family: var(--mono); }
+  .param-value.type{ font-family: var(--sans); }
+  .required-tag{ display:inline-flex; align-items:center; gap:6px; font-size:11.5px; margin-top:10px; color: var(--text-faint); }
+  .required-tag .box{ width:14px; height:14px; border-radius:4px; border:1.4px solid var(--text-faint); display:inline-flex; align-items:center; justify-content:center; }
+  .required-tag.on{ color: var(--violet-dark); font-weight:600; }
+  .required-tag.on .box{ background: var(--violet); border-color: var(--violet); }
+  .required-tag .box svg{ width:9px; height:9px; }
+</style>
+
+<div id="moonai-root">
+  <div class="shell">
+    <div class="pagehead">
+      <h1>Быстрый старт промпта <span class="pill-help">?</span></h1>
+      <div class="sub">7 вопросов — и вы получите промпт для агента и заготовку функции для сохранения данных клиента.</div>
+    </div>
+    <div id="wizardArea"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const SPARK = '<svg class="sparkle" viewBox="0 0 24 24" fill="none"><path d="M12 2l1.8 5.6L19 9l-5.2 1.4L12 16l-1.8-5.6L5 9l5.2-1.4L12 2z" fill="currentColor"/></svg>';
+  const CHECK = '<svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4 10-10" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  const QUESTIONS = [
+    { key:"company", title:"Как называется ваша компания и чем она занимается?",
+      hint:"Название и пару предложений: сфера, продукт, кому и что вы даёте.",
+      placeholder:"Помогаем поступать в зарубежные вузы: подбираем программы, готовим документы, сопровождаем до зачисления...",
+      hasName:true, namePlaceholder:"Например: EduPath Consulting",
+      example:{ name:"EduPath Consulting", text:"Помогаем поступать в зарубежные вузы: подбираем программы бакалавриата, магистратуры и языковые курсы, готовим документы и сопровождаем клиента от заявки до зачисления. Работаем с США, Великобританией, ОАЭ и странами Европы." },
+      chips:["Поступление в вузы","Гранты и стипендии","Языковые курсы","Детские образовательные лагеря","Стажировки за рубежом"],
+      microHint:"Чем подробнее опишете — тем точнее агент будет отвечать 🙂" },
+    { key:"goal", title:"К чему должен довести клиента агент?",
+      hint:"Ключевое целевое действие — выберите готовый вариант или впишите свой.",
+      placeholder:"Например: довести до записи на бесплатную консультацию",
+      example:"Довести клиента до записи на бесплатную консультацию с менеджером и передать его контакты.",
+      chips:["Довести до записи на консультацию","Получить заполненную заявку","Собрать контакты для звонка менеджера","Записать на вступительное тестирование","Записать на подбор программы или вуза"] },
+    { key:"faq", title:"Какие вопросы клиентов агент должен уметь решать?",
+      hint:"Темы, в рамках которых агент отвечает — вставьте свой FAQ или выберите из списка.",
+      placeholder:"Страны и вузы, стоимость обучения, документы, визы...",
+      example:"Страны и вузы, стоимость и способы оплаты обучения, гранты и стипендии, документы для поступления, визы и проживание, языковые требования (IELTS/TOEFL), детские лагеря и стажировки.",
+      chips:["Страны и вузы","Стоимость обучения","Гранты и стипендии","Документы и визы","Языковые требования (IELTS/TOEFL)","Детские лагеря","Стажировки"],
+      microHint:"Чем подробнее — тем увереннее агент будет отвечать на конкретные вопросы 🙂" },
+    { key:"style", title:"Как агент должен общаться?",
+      hint:"Тон, длина ответов, эмодзи, язык клиента.",
+      placeholder:"Например: дружелюбно, коротко, можно эмодзи",
+      example:"Просто и по-человечески, короткими сообщениями в 2–3 предложения, с уместными эмодзи, без канцелярита и формальностей.",
+      chips:["Дружелюбно, с эмодзи","Коротко и по делу","Формально и сдержанно","Как живой консультант"] },
+    { key:"forbidden", title:"Что агенту нельзя делать или говорить?",
+      hint:"Ограничения и запреты — то, что агент не должен допускать никогда.",
+      placeholder:"Например: не называть точные цены",
+      example:"Не называть точные цены, не обещать гарантированное поступление, не записывать клиента на конкретное время звонка, не выдумывать информацию о вузах и программах.",
+      chips:["Не называть точные цены","Не гарантировать поступление","Не записывать на точное время звонка","Не выдумывать факты о вузах","Не обсуждать конкурентов"] },
+    { key:"unknown", title:"Что делать, если агент не знает ответа?",
+      hint:"Как реагировать на вопрос вне базы знаний.",
+      placeholder:"Например: передать менеджеру",
+      example:"Сказать клиенту, что уточнит информацию у специалиста, и передать диалог менеджеру.",
+      chips:["Передать менеджеру","Сказать, что уточнит и вернётся с ответом","Предложить оставить контакты для звонка"] },
+    { key:"data", title:"Какие данные агент должен собирать у клиента?",
+      hint:"Что нужно получить до передачи диалога живому менеджеру.",
+      placeholder:"Например: имя, номер WhatsApp, для кого обучение",
+      example:"Имя, номер телефона в формате WhatsApp, для кого рассматривается обучение (для себя или ребёнка), класс или курс обучения, страна и уровень программы.",
+      chips:["Имя и номер WhatsApp","Для кого: клиент или ребёнок","Класс / курс обучения","Страна и уровень (бакалавриат/магистратура)","Возраст ребёнка (для лагерей)"] }
+  ];
+
+  const SERVICE_BRANCHES = {
+    "Поступление в вузы": { label:"поступление в вуз / образование за границей", script:"Отлично! В какую страну вы рассматриваете поступление?\n🎓 И на какой уровень обучения: бакалавриат, магистратура или докторантура?" },
+    "Гранты и стипендии": { label:"гранты / стипендии", script:"Хороший выбор!\nПоступление на грант или стипендию зависит от вашего портфолио. Пожалуйста, укажите специальность, страну и расскажите немного о себе." },
+    "Детские образовательные лагеря": { label:"детские лагеря", script:"Спасибо за интерес! Уточните, пожалуйста:\n📍 В какую страну рассматриваете (США, Гонконг, ОАЭ, Европа)?\n👶 Возраст ребёнка?" },
+    "Стажировки за рубежом": { label:"стажировки", script:"Подскажите, вы сейчас студент или уже выпустились?\nВ какой сфере хотите пройти стажировку и в какой стране?" },
+    "Языковые курсы": { label:"языковые курсы", script:"Уточните, пожалуйста:\n🗣 Какой язык и уровень вас интересует?\nИ какой формат удобнее — онлайн или офлайн?" }
+  };
+
+  function buildStep2(a){
+    const chosen = (a.company||"").split(",").map(s=>s.trim()).filter(c => SERVICE_BRANCHES[c]);
+    if (!chosen.length){
+      return `2. Уточни запрос. По смыслу ответа клиента задай уточняющие вопросы под тему (страна, уровень обучения, специальность, возраст ребёнка и т.п.).\n\nЕсли вопрос не подходит ни под одну тему:\nОпишите, пожалуйста, ваш вопрос — постараюсь помочь или передам менеджеру 😊`;
+    }
+    let out = "";
+    chosen.forEach((c, i) => {
+      const b = SERVICE_BRANCHES[c];
+      const num = i === 0 ? "2" : `2.${i}`;
+      out += `${num}. Если клиент выбрал «${b.label}» — напиши:\n${b.script}\n\n`;
+    });
+    out += `2.${chosen.length}. Если запрос не подходит ни под одну тему выше — напиши:\nОпишите, пожалуйста, ваш вопрос — постараюсь помочь или передам менеджеру 😊`;
+    return out;
+  }
+
+  const GOAL_FUNCTION_MAP = [
+    { match:"Довести до записи на консультацию", name:"new_lead" },
+    { match:"Собрать контакты для звонка менеджера", name:"new_lead" },
+    { match:"Получить заполненную заявку", name:"new_application" },
+    { match:"Записать на вступительное тестирование", name:"new_test_registration" },
+    { match:"Записать на подбор программы или вуза", name:"new_program_request" }
+  ];
+
+  const DATA_PARAM_MAP = {
+    "Для кого: клиент или ребёнок": [{ name:"for_whom", type:"Текстовый", instruction:"Для кого рассматривается обучение — для себя или для ребёнка" }],
+    "Класс / курс обучения": [{ name:"grade_or_course", type:"Текстовый", instruction:"Класс ребёнка или курс обучения клиента" }],
+    "Страна и уровень (бакалавриат/магистратура)": [{ name:"country_and_level", type:"Текстовый", instruction:"Страна поступления и уровень программы (бакалавриат/магистратура/докторантура)" }],
+    "Возраст ребёнка (для лагерей)": [{ name:"child_age", type:"Текстовый", instruction:"Возраст ребёнка (для лагерей)" }]
+  };
+
+  const state = { step:0, answers:{}, finished:false, resultTab:"prompt" };
+
+  function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function slug(s){ return (s||"").toLowerCase().trim(); }
+
+  function toggleChip(key, chipText){
+    let val = state.answers[key] || "";
+    let parts = val.split(",").map(s=>s.trim()).filter(Boolean);
+    const idx = parts.indexOf(chipText);
+    if (idx >= 0) parts.splice(idx,1); else parts.push(chipText);
+    state.answers[key] = parts.join(", ");
+    render();
+  }
+
+  function fillExample(q){
+    if (q.hasName){ state.answers.company_name = q.example.name; state.answers[q.key] = q.example.text; }
+    else { state.answers[q.key] = q.example; }
+    render();
+  }
+
+  function buildPrompt(a, funcName){
+    const get = (k, fb) => (a[k] && a[k].trim()) ? a[k].trim() : fb;
+    const companyName = get("company_name", "[название компании не заполнено]");
+    const company = get("company", "[описание компании не заполнено]");
+    const goal = get("goal", "[целевое действие не заполнено]");
+    const faq = get("faq", "[темы FAQ не заполнены]");
+    const style = get("style", "[стиль общения не заполнен]");
+    const forbidden = get("forbidden", "[ограничения не заполнены]");
+    const unknown = get("unknown", "сообщить клиенту, что уточнит информацию, и передать диалог менеджеру");
+    const data = get("data", "[какие данные собирать — не заполнено]");
+    const step2 = buildStep2(a);
+    const fn = funcName || "get_info";
+
+    return `Ты — виртуальный ассистент компании ${companyName}.
+Твоя задача — отвечать на вопросы клиентов, собирать их данные и передавать для консультации менеджеру.
+
+🎯 Основные принципы работы:
+1. Только по теме: отвечай только на вопросы, касающиеся ${company}. Если вопрос не по теме — вежливо направляй обратно к теме.
+2. Язык общения: пиши на языке клиента (русский, казахский или другой). Можно менять язык по ходу диалога, но не смешивай языки в одном сообщении.
+3. Грамотность: проверяй сообщения на ошибки перед отправкой.
+4. Простота и человечность: пиши просто и по-человечески, как реальный человек, без канцелярита. Разбивай длинные ответы на смысловые блоки.
+5. Эмодзи: используй уместные эмодзи, где это естественно.
+6. Краткость: старайся отвечать в 2–4 предложениях, не вываливай всю информацию сразу — выдавай постепенно.
+7. Не выдумывай: не придумывай факты, цены, сроки и условия, которых нет в этом промпте или базе знаний — лучше скажи, что уточнишь.
+8. Стиль общения: ${style}
+9. Что запрещено: ${forbidden}
+10. Если не знаешь ответа: ${unknown}
+11. Уточни, для кого клиент рассматривает услугу — для себя или для ребёнка, если это важно для вашей ниши.
+12. Никогда не записывай клиента на точное время звонка — сообщи, что с ним свяжется менеджер в ближайшее время в рабочее время.
+13. Когда спрашиваешь номер телефона — клиент должен написать его цифрами, а не текстом («этот номер» не подходит, нужны сами цифры).
+
+Уровень краткости: 7
+Уровень импровизации: 1
+
+---
+
+Скрипт диалога
+
+1. Познакомься. Напиши:
+Здравствуйте! 👋 Вы написали в ${companyName} — ${company}
+Подскажите, какой у вас вопрос?
+
+${step2}
+
+Общая цель этого шага: ${goal}
+
+3.1. Запроси контакт. Напиши:
+Чтобы наш менеджер связался с вами и помог с вашим запросом, напишите, пожалуйста, ваше имя и номер телефона с WhatsApp 📱
+
+3.2. После того как получил все данные (имя и номер — ОБЯЗАТЕЛЬНО СПРАШИВАЙ НОМЕР), напиши клиенту, что менеджер свяжется с ним в ближайшее время, и передай их по функции ${fn}.
+
+---
+
+Обработка возражений
+Если клиент сомневается или возражает — определи суть возражения и ответь мягко, без давления. Примеры:
+
+Q: Это дорого / не готов платить сейчас
+A: Понимаю 😊 Именно поэтому консультация бесплатная — можно спокойно разобрать бюджет и варианты. Запишем?
+
+Q: Родители против / нужно их одобрение
+A: Отлично 🙌 Тогда предложим показать родителям расчёт прямо на консультации. Записать вас вместе?
+
+Q: Боюсь не поступить / не потяну
+A: Поэтому и есть бесплатная консультация — на ней оценят реальные шансы 🎯. Удобно записать?
+
+---
+
+Темы, в которых нужно разбираться (FAQ):
+${faq}
+
+Данные, которые нужно собрать у клиента:
+${data}
+Уточняй данные по одному вопросу за раз, не спрашивай всё сразу.
+
+---
+
+О компании:
+${companyName} — ${company}`;
+  }
+
+  function pickFunctionName(goalText){
+    if (!goalText) return "new_lead";
+    for (const m of GOAL_FUNCTION_MAP){ if (goalText.includes(m.match)) return m.name; }
+    return "new_lead";
+  }
+
+  function buildFunctionSpec(a){
+    const dataVal = (a.data||"").trim();
+    const parts = dataVal.split(",").map(s=>s.trim()).filter(Boolean);
+    let params = [
+      { name:"client_name", type:"Текстовый", instruction:"Имя клиента", required:true },
+      { name:"client_phone", type:"Текстовый", instruction:"Номер телефона клиента (WhatsApp)", required:true }
+    ];
+    let leftover = [];
+    parts.forEach(p => {
+      if (p === "Имя и номер WhatsApp") return;
+      if (DATA_PARAM_MAP[p]) { params = params.concat(DATA_PARAM_MAP[p]); }
+      else leftover.push(p);
+    });
+    if (leftover.length){
+      params.push({ name:"client_note", type:"Текстовый", instruction: leftover.join("; "), required:false });
+    }
+    return {
+      name: pickFunctionName(a.goal||""),
+      description: "Когда клиент ответил на все вопросы и отправил свои данные — сохрани данные клиента и передай их менеджеру.",
+      params
+    };
+  }
+
+  function chipsHtml(q){
+    if (!q.chips) return "";
+    const current = (state.answers[q.key]||"").split(",").map(s=>s.trim());
+    let html = '<div class="chiprow">';
+    q.chips.forEach((c) => {
+      const checked = current.includes(c);
+      html += `<label class="chip ${checked?'checked':''}" data-chip="${esc(c)}" data-key="${q.key}"><span class="box">${CHECK}</span>${esc(c)}</label>`;
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function render(){
+    const area = document.getElementById("wizardArea");
+    if (state.finished){ renderDone(area); return; }
+
+    const q = QUESTIONS[state.step];
+    const total = QUESTIONS.length;
+    const value = state.answers[q.key] || "";
+    const pct = Math.round((state.step/total)*100);
+
+    let answeredHtml = "";
+    for (let i=0;i<state.step;i++){
+      const qq = QUESTIONS[i];
+      const v = state.answers[qq.key];
+      const label = qq.hasName && state.answers.company_name ? `${state.answers.company_name} — ${v||''}` : v;
+      answeredHtml += `<div class="answered-item"><div class="k">${esc(qq.title)}</div><div class="v ${label ? "" : "placeholder"}">${label ? esc(label) : "пропущено"}</div></div>`;
+    }
+
+    area.innerHTML = `
+      <div class="card">
+        <div class="progress-row">
+          <span class="progress-label">Вопрос ${state.step+1} из ${total}</span>
+          <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+          <span class="progress-count">${pct}%</span>
+        </div>
+        <div class="label-row">
+          <div class="field-label">${esc(q.title)}</div>
+          <div class="fill-example" id="fillExampleBtn">✨ Заполнить примером</div>
+        </div>
+        <div class="field-hint">${esc(q.hint)}</div>
+        ${q.microHint ? `<div class="micro-hint">${esc(q.microHint)}</div>` : ""}
+        ${q.hasName ? `<div class="name-input"><label>Название компании</label><input type="text" id="nameInput" placeholder="${esc(q.namePlaceholder)}" value="${esc(state.answers.company_name||"")}"></div>` : ""}
+        ${chipsHtml(q)}
+        <textarea id="answerInput" placeholder="${esc(q.placeholder)}">${esc(value)}</textarea>
+        <div class="nav">
+          <button class="btn-text" id="backBtn" ${state.step===0 ? "disabled":""}>← Назад</button>
+          <div class="btnrow"><button class="btn-primary" id="nextBtn">${SPARK}${state.step===total-1 ? "Собрать промпт" : "Далее"}</button></div>
+        </div>
+      </div>
+      ${answeredHtml ? `<div class="card"><div class="section-title">Уже отвечено</div><div class="section-sub">Можно вернуться назад и изменить любой ответ.</div><div class="answered-list">${answeredHtml}</div></div>` : ""}
+    `;
+
+    const ta = document.getElementById("answerInput");
+    ta.addEventListener("input", (e) => { state.answers[q.key] = e.target.value; });
+    ta.focus(); ta.selectionStart = ta.value.length;
+
+    if (q.hasName){
+      document.getElementById("nameInput").addEventListener("input", (e) => { state.answers.company_name = e.target.value; });
+    }
+    document.getElementById("fillExampleBtn").addEventListener("click", () => fillExample(q));
+    area.querySelectorAll(".chip").forEach(chip => {
+      chip.addEventListener("click", () => toggleChip(chip.dataset.key, chip.dataset.chip));
+    });
+    document.getElementById("backBtn").addEventListener("click", () => { if (state.step>0){ state.step--; render(); } });
+    document.getElementById("nextBtn").addEventListener("click", () => {
+      state.answers[q.key] = ta.value;
+      if (state.step === total-1){ state.finished = true; render(); }
+      else { state.step++; render(); }
+    });
+  }
+
+  function paramCardHtml(p){
+    return `<div class="param-card">
+      <div class="param-grid">
+        <div class="param-field"><label>Название</label><div class="param-value">${esc(p.name)}</div></div>
+        <div class="param-field"><label>Тип параметра</label><div class="param-value type">${esc(p.type)}</div></div>
+        <div class="param-field"><label>Инструкция</label><div class="param-value type">${esc(p.instruction)}</div></div>
+      </div>
+      <div class="required-tag ${p.required ? "on":""}"><span class="box">${p.required?CHECK:""}</span>Обязательный параметр</div>
+    </div>`;
+  }
+
+  function renderDone(area){
+    const func = buildFunctionSpec(state.answers);
+    const promptText = buildPrompt(state.answers, func.name);
+    const funcSpecText = `Название: ${func.name}\nОписание: ${func.description}\n\nПараметры:\n` + func.params.map(p => `- ${p.name} (${p.type}${p.required ? ", обязательный" : ""}): ${p.instruction}`).join("\n");
+
+    area.innerHTML = `
+      <div class="card">
+        <div class="result-tabs">
+          <div class="result-tab ${state.resultTab==='prompt'?'active':''}" id="tabPrompt">Промпт</div>
+          <div class="result-tab ${state.resultTab==='function'?'active':''}" id="tabFunction">Функция</div>
+        </div>
+
+        <div id="resultBody"></div>
+      </div>
+    `;
+
+    const body = document.getElementById("resultBody");
+
+    if (state.resultTab === "prompt"){
+      body.innerHTML = `
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
+          <div>
+            <div class="section-title">Инструкция для агента</div>
+            <div class="section-sub" style="margin-bottom:0;">Промпт собран по вашим ответам — можно отредактировать вручную перед сохранением.</div>
+          </div>
+          <span class="badge-status"><span class="dot"></span>Черновик готов</span>
+        </div>
+        <div class="final-output">${esc(promptText)}</div>
+        <div class="nav">
+          <button class="btn-text" id="editBtn">← Вернуться к вопросам</button>
+          <div class="btnrow">
+            <button class="btn-outline" id="downloadBtn">Скачать .txt</button>
+            <button class="btn-outline" id="copyBtn">Скопировать</button>
+            <button class="btn-primary" id="useBtn">${SPARK}Использовать в агенте</button>
+          </div>
+        </div>
+        <div class="note" id="copyFlagNote"></div>
+      `;
+      document.getElementById("copyBtn").addEventListener("click", () => {
+        navigator.clipboard.writeText(promptText).then(() => {
+          const n = document.getElementById("copyFlagNote");
+          n.innerHTML = '<span class="copied-flag">Скопировано ✓</span>';
+          setTimeout(()=>{ if(n) n.innerHTML=""; }, 2000);
+        });
+      });
+      document.getElementById("downloadBtn").addEventListener("click", () => {
+        const blob = new Blob([promptText], {type:"text/plain;charset=utf-8"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a"); a.href = url; a.download = "moonai-agent-prompt.txt";
+        document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+      });
+      document.getElementById("useBtn").addEventListener("click", () => {
+        document.getElementById("copyFlagNote").innerHTML = '<span class="copied-flag">Промпт вставлен в поле "Инструкция для агента" ✓</span>';
+      });
+      document.getElementById("editBtn").addEventListener("click", () => { state.finished = false; state.step = QUESTIONS.length-1; render(); });
+    } else {
+      body.innerHTML = `
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
+          <div>
+            <div class="section-title">Детали функции</div>
+            <div class="section-sub" style="margin-bottom:0;">Создайте такую функцию во вкладке «Функции» вашего агента — параметры собраны из ваших ответов.</div>
+          </div>
+          <span class="badge-status"><span class="dot"></span>Черновик готов</span>
+        </div>
+
+        <div class="func-toprow">
+          <div class="func-field"><label>Название</label><div class="func-static">${esc(func.name)}</div></div>
+        </div>
+        <div class="func-field" style="margin-bottom:18px;"><label>Описание</label><div class="func-static desc">${esc(func.description)}</div></div>
+
+        <div class="status-row"><div class="toggle-fake"></div><span class="lbl">Статус функции: активна</span></div>
+
+        <div class="section-title" style="font-size:14px;">Параметры функции</div>
+        <div class="section-sub">Можно добавить или переименовать параметры прямо в интерфейсе платформы.</div>
+        <div id="paramsList">${func.params.map(paramCardHtml).join("")}</div>
+
+        <div class="nav">
+          <button class="btn-text" id="editBtn2">← Вернуться к вопросам</button>
+          <div class="btnrow">
+            <button class="btn-outline" id="downloadFuncBtn">Скачать .txt</button>
+            <button class="btn-outline" id="copyFuncBtn">Скопировать</button>
+          </div>
+        </div>
+        <div class="note" id="copyFlagNote2"></div>
+      `;
+      document.getElementById("copyFuncBtn").addEventListener("click", () => {
+        navigator.clipboard.writeText(funcSpecText).then(() => {
+          const n = document.getElementById("copyFlagNote2");
+          n.innerHTML = '<span class="copied-flag">Скопировано ✓</span>';
+          setTimeout(()=>{ if(n) n.innerHTML=""; }, 2000);
+        });
+      });
+      document.getElementById("downloadFuncBtn").addEventListener("click", () => {
+        const blob = new Blob([funcSpecText], {type:"text/plain;charset=utf-8"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a"); a.href = url; a.download = `${func.name}-function.txt`;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+      });
+      document.getElementById("editBtn2").addEventListener("click", () => { state.finished = false; state.step = QUESTIONS.length-1; render(); });
+    }
+
+    document.getElementById("tabPrompt").addEventListener("click", () => { state.resultTab = "prompt"; renderDone(area); });
+    document.getElementById("tabFunction").addEventListener("click", () => { state.resultTab = "function"; renderDone(area); });
+  }
+
+  render();
+})();
+</script>
