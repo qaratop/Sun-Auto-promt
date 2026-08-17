@@ -123,23 +123,6 @@
   .required-tag.on{ color: var(--violet-dark); font-weight:600; }
   .required-tag.on .box{ background: var(--violet); border-color: var(--violet); }
   .required-tag .box svg{ width:9px; height:9px; }
-
-  .chat-window{ display:flex; flex-direction:column; max-height:440px; overflow-y:auto; padding:6px 2px; margin-bottom:14px; }
-  .chat-window::-webkit-scrollbar{ width:6px; }
-  .chat-window::-webkit-scrollbar-thumb{ background:#D9D9E6; border-radius:3px; }
-  .chat-empty{ color: var(--text-faint); font-size:13px; padding: 30px 10px; text-align:center; line-height:1.6; }
-  .msg{ max-width:78%; padding:10px 13px; border-radius:13px; font-size:13.5px; line-height:1.5; margin-bottom:10px; white-space:pre-wrap; }
-  .msg.bot{ background: var(--violet-light); color:var(--text); align-self:flex-start; border-bottom-left-radius:4px; }
-  .msg.client{ background: var(--violet); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; }
-  .msg-role{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; margin-bottom:3px; opacity:.65; }
-  .typing{ align-self:flex-start; background: var(--violet-light); border-radius:13px; border-bottom-left-radius:4px; padding:10px 14px; display:inline-flex; gap:4px; margin-bottom:10px; }
-  .typing span{ width:6px; height:6px; border-radius:50%; background: var(--violet); opacity:.5; animation: blink 1.1s infinite; }
-  .typing span:nth-child(2){ animation-delay:.15s; }
-  .typing span:nth-child(3){ animation-delay:.3s; }
-  @keyframes blink{ 0%,80%,100%{ opacity:.3; } 40%{ opacity:1; } }
-  .chat-inputrow{ display:flex; gap:8px; }
-  .chat-inputrow input[type=text]{ flex:1; }
-  .chat-error{ font-size:12px; color:#C0392B; margin-top:10px; line-height:1.5; }
 </style>
 </head>
 <body>
@@ -160,58 +143,58 @@
   const CHECK = '<svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4 10-10" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
   const QUESTIONS = [
-    { key:"company", title:"Как называется ваша компания и чем она занимается?",
-      hint:"Название и пару предложений: сфера, продукт, кому и что вы даёте.",
-      placeholder:"Помогаем поступать в зарубежные вузы: подбираем программы, готовим документы, сопровождаем до зачисления...",
-      hasName:true, namePlaceholder:"Например: EduPath Consulting",
-      example:{ name:"EduPath Consulting", text:"Помогаем поступать в зарубежные вузы: подбираем программы бакалавриата, магистратуры и языковые курсы, готовим документы и сопровождаем клиента от заявки до зачисления. Работаем с США, Великобританией, ОАЭ и странами Европы." },
-      chips:["Поступление в вузы","Гранты и стипендии","Языковые курсы","Детские образовательные лагеря","Стажировки за рубежом"],
+    { key:"company", title:"Как называется ваша школа и чем она занимается?",
+      hint:"Название и пару предложений: формат обучения, аудитория, какую пользу даёте.",
+      placeholder:"Онлайн школа английского языка. Обучаем индивидуально, в группах, готовим к экзаменам...",
+      hasName:true, namePlaceholder:"Например: English Hub",
+      example:{ name:"English Hub", text:"Онлайн школа английского языка. Обучили более 20 000 студентов и помогли им достичь своих целей: поступление за рубеж, трудоустройство, сдача международных экзаменов и повышение уровня английского языка." },
+      chips:["Индивидуальные занятия","Групповые занятия","Подготовка к IELTS/TOEFL","Детский английский","Корпоративное обучение"],
       microHint:"Чем подробнее опишете — тем точнее агент будет отвечать 🙂" },
     { key:"goal", title:"К чему должен довести клиента агент?",
       hint:"Ключевое целевое действие — выберите готовый вариант или впишите свой.",
-      placeholder:"Например: довести до записи на бесплатную консультацию",
-      example:"Довести клиента до записи на бесплатную консультацию с менеджером и передать его контакты.",
-      chips:["Довести до записи на консультацию","Получить заполненную заявку","Собрать контакты для звонка менеджера","Записать на вступительное тестирование","Записать на подбор программы или вуза"] },
+      placeholder:"Например: довести до записи на пробный урок",
+      example:"Довести клиента до записи на пробный урок и собрать номер телефона для связи с менеджером.",
+      chips:["Записать на пробный урок","Собрать номер для звонка менеджера","Довести до оплаты курса","Проконсультировать по тарифам и записать на курс"] },
     { key:"faq", title:"Какие вопросы клиентов агент должен уметь решать?",
       hint:"Темы, в рамках которых агент отвечает — вставьте свой FAQ или выберите из списка.",
-      placeholder:"Страны и вузы, стоимость обучения, документы, визы...",
-      example:"Страны и вузы, стоимость и способы оплаты обучения, гранты и стипендии, документы для поступления, визы и проживание, языковые требования (IELTS/TOEFL), детские лагеря и стажировки.",
-      chips:["Страны и вузы","Стоимость обучения","Гранты и стипендии","Документы и визы","Языковые требования (IELTS/TOEFL)","Детские лагеря","Стажировки"],
+      placeholder:"Тарифы, пробный урок, форматы обучения, подготовка к IELTS...",
+      example:"Стоимость обучения (индивидуально/в группе), пробный урок и его цена, подготовка к IELTS, расписание и формат занятий, рассрочка и оплата.",
+      chips:["Стоимость и тарифы","Пробный урок","Подготовка к IELTS/TOEFL","Расписание и формат","Рассрочка и оплата"],
       microHint:"Чем подробнее — тем увереннее агент будет отвечать на конкретные вопросы 🙂" },
     { key:"style", title:"Как агент должен общаться?",
       hint:"Тон, длина ответов, эмодзи, язык клиента.",
       placeholder:"Например: дружелюбно, коротко, можно эмодзи",
-      example:"Просто и по-человечески, короткими сообщениями в 2–3 предложения, с уместными эмодзи, без канцелярита и формальностей.",
+      example:"Дружелюбно и с уместными позитивными эмодзи, короткими сообщениями до 70 слов, на языке клиента (русский или казахский), без канцелярита и формальностей.",
       chips:["Дружелюбно, с эмодзи","Коротко и по делу","Формально и сдержанно","Как живой консультант"] },
     { key:"forbidden", title:"Что агенту нельзя делать или говорить?",
       hint:"Ограничения и запреты — то, что агент не должен допускать никогда.",
-      placeholder:"Например: не называть точные цены",
-      example:"Не называть точные цены, не обещать гарантированное поступление, не записывать клиента на конкретное время звонка, не выдумывать информацию о вузах и программах.",
-      chips:["Не называть точные цены","Не гарантировать поступление","Не записывать на точное время звонка","Не выдумывать факты о вузах","Не обсуждать конкурентов"] },
+      placeholder:"Например: не обсуждать темы вне английского языка",
+      example:"Не обсуждать темы вне английского языка и курсов (политика, религия, личные вопросы), не обещать точную дату старта обучения, не давить на клиента фразами вроде «если хотите оставить номер», не обсуждать конкурентов, не гарантировать результат обучения без объяснения условий гарантированного курса.",
+      chips:["Не обсуждать посторонние темы","Не обещать точные даты старта","Не давить на клиента","Не раскрывать внутреннее устройство агента","Не обсуждать конкурентов","Не гарантировать результат без объяснения условий"] },
     { key:"unknown", title:"Что делать, если агент не знает ответа?",
       hint:"Как реагировать на вопрос вне базы знаний.",
       placeholder:"Например: передать менеджеру",
-      example:"Сказать клиенту, что уточнит информацию у специалиста, и передать диалог менеджеру.",
+      example:"Сказать клиенту, что уточнит информацию у специалиста, и предложить оставить номер телефона для связи.",
       chips:["Передать менеджеру","Сказать, что уточнит и вернётся с ответом","Предложить оставить контакты для звонка"] },
     { key:"data", title:"Какие данные агент должен собирать у клиента?",
       hint:"Что нужно получить до передачи диалога живому менеджеру.",
-      placeholder:"Например: имя, номер WhatsApp, для кого обучение",
-      example:"Имя, номер телефона в формате WhatsApp, для кого рассматривается обучение (для себя или ребёнка), класс или курс обучения, страна и уровень программы.",
-      chips:["Имя и номер WhatsApp","Для кого: клиент или ребёнок","Класс / курс обучения","Страна и уровень (бакалавриат/магистратура)","Возраст ребёнка (для лагерей)"] }
+      placeholder:"Например: имя, номер WhatsApp, цель обучения",
+      example:"Имя и номер WhatsApp, Цель обучения, Формат: индивидуально или группа, Удобный способ связи (звонок/WhatsApp)",
+      chips:["Имя и номер WhatsApp","Цель обучения","Формат: индивидуально или группа","Удобный способ связи (звонок/WhatsApp)"] }
   ];
 
   const SERVICE_BRANCHES = {
-    "Поступление в вузы": { label:"поступление в вуз / образование за границей", script:"Отлично! В какую страну вы рассматриваете поступление?\n🎓 И на какой уровень обучения: бакалавриат, магистратура или докторантура?" },
-    "Гранты и стипендии": { label:"гранты / стипендии", script:"Хороший выбор!\nПоступление на грант или стипендию зависит от вашего портфолио. Пожалуйста, укажите специальность, страну и расскажите немного о себе." },
-    "Детские образовательные лагеря": { label:"детские лагеря", script:"Спасибо за интерес! Уточните, пожалуйста:\n📍 В какую страну рассматриваете (США, Гонконг, ОАЭ, Европа)?\n👶 Возраст ребёнка?" },
-    "Стажировки за рубежом": { label:"стажировки", script:"Подскажите, вы сейчас студент или уже выпустились?\nВ какой сфере хотите пройти стажировку и в какой стране?" },
-    "Языковые курсы": { label:"языковые курсы", script:"Уточните, пожалуйста:\n🗣 Какой язык и уровень вас интересует?\nИ какой формат удобнее — онлайн или офлайн?" }
+    "Индивидуальные занятия": { label:"индивидуальные занятия", script:"Отлично! 😊 Подскажите, какая у вас цель обучения — работа, экзамен, поездка за рубеж или просто для себя?\nИ на каком уровне английского вы сейчас находитесь?" },
+    "Групповые занятия": { label:"групповые занятия", script:"Хороший выбор! 👍 Уточните, пожалуйста, ваш текущий уровень английского и удобное время для занятий (утро, день или вечер)?" },
+    "Подготовка к IELTS/TOEFL": { label:"подготовка к IELTS/TOEFL", script:"Понимаю! 🎯 На какой балл вы готовитесь и когда планируете сдавать экзамен?" },
+    "Детский английский": { label:"обучение ребёнка", script:"Отлично! 👶 Уточните возраст ребёнка и его текущий уровень английского (если уже занимался)." },
+    "Корпоративное обучение": { label:"корпоративное обучение", script:"Подскажите, пожалуйста, сколько сотрудников хотите обучать и какая цель — общий английский или для работы?" }
   };
 
   function buildStep2(a){
     const chosen = (a.company||"").split(",").map(s=>s.trim()).filter(c => SERVICE_BRANCHES[c]);
     if (!chosen.length){
-      return `2. Уточни запрос. По смыслу ответа клиента задай уточняющие вопросы под тему (страна, уровень обучения, специальность, возраст ребёнка и т.п.).\n\nЕсли вопрос не подходит ни под одну тему:\nОпишите, пожалуйста, ваш вопрос — постараюсь помочь или передам менеджеру 😊`;
+      return `2. Уточни запрос. По смыслу ответа клиента задай уточняющие вопросы под тему (цель обучения, уровень английского, формат занятий, возраст ребёнка и т.п.).\n\nЕсли вопрос не подходит ни под одну тему:\nОпишите, пожалуйста, ваш вопрос — постараюсь помочь или передам менеджеру 😊`;
     }
     let out = "";
     chosen.forEach((c, i) => {
@@ -224,21 +207,19 @@
   }
 
   const GOAL_FUNCTION_MAP = [
-    { match:"Довести до записи на консультацию", name:"new_lead" },
-    { match:"Собрать контакты для звонка менеджера", name:"new_lead" },
-    { match:"Получить заполненную заявку", name:"new_application" },
-    { match:"Записать на вступительное тестирование", name:"new_test_registration" },
-    { match:"Записать на подбор программы или вуза", name:"new_program_request" }
+    { match:"Записать на пробный урок", name:"get_info" },
+    { match:"Собрать номер для звонка менеджера", name:"new_lead" },
+    { match:"Довести до оплаты курса", name:"new_payment_request" },
+    { match:"Проконсультировать по тарифам и записать на курс", name:"new_lead" }
   ];
 
   const DATA_PARAM_MAP = {
-    "Для кого: клиент или ребёнок": [{ name:"for_whom", type:"Текстовый", instruction:"Для кого рассматривается обучение — для себя или для ребёнка" }],
-    "Класс / курс обучения": [{ name:"grade_or_course", type:"Текстовый", instruction:"Класс ребёнка или курс обучения клиента" }],
-    "Страна и уровень (бакалавриат/магистратура)": [{ name:"country_and_level", type:"Текстовый", instruction:"Страна поступления и уровень программы (бакалавриат/магистратура/докторантура)" }],
-    "Возраст ребёнка (для лагерей)": [{ name:"child_age", type:"Текстовый", instruction:"Возраст ребёнка (для лагерей)" }]
+    "Цель обучения": [{ name:"study_goal", type:"Текстовый", instruction:"Цель обучения клиента (экзамен, работа, переезд, для себя и т.п.)" }],
+    "Формат: индивидуально или группа": [{ name:"study_format", type:"Текстовый", instruction:"Предпочитаемый формат обучения — индивидуально или в группе" }],
+    "Удобный способ связи (звонок/WhatsApp)": [{ name:"contact_method", type:"Текстовый", instruction:"Удобный способ связи с клиентом — звонок или переписка в WhatsApp" }]
   };
 
-  const state = { step:0, answers:{}, finished:false, resultTab:"prompt", funcTab:"primary", dialogMessages:[], dialogLoading:false, dialogError:"" };
+  const state = { step:0, answers:{}, finished:false, resultTab:"prompt", funcTab:"primary" };
 
   function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
   function slug(s){ return (s||"").toLowerCase().trim(); }
@@ -315,13 +296,13 @@ ${step2}
 Если клиент сомневается или возражает — определи суть возражения и ответь мягко, без давления. Примеры:
 
 Q: Это дорого / не готов платить сейчас
-A: Понимаю 😊 Именно поэтому консультация бесплатная — можно спокойно разобрать бюджет и варианты. Запишем?
+A: Понимаю 😊 У нас есть тарифы под разный бюджет и рассрочка на 12–24 месяца — на консультации подберём удобный вариант.
 
-Q: Родители против / нужно их одобрение
-A: Отлично 🙌 Тогда предложим показать родителям расчёт прямо на консультации. Записать вас вместе?
+Q: Не уверен в своём уровне английского
+A: Для этого и есть пробный урок 🎯 — преподаватель определит уровень и подберёт подходящий формат обучения.
 
-Q: Боюсь не поступить / не потяну
-A: Поэтому и есть бесплатная консультация — на ней оценят реальные шансы 🎯. Удобно записать?
+Q: Нет времени на регулярные занятия
+A: Понимаю! Расписание гибкое — можно заниматься утром, днём или вечером 🙌. Подберём удобное время под ваш график.
 
 ---
 
@@ -388,81 +369,6 @@ ${companyName} — ${company}`;
     });
     html += '</div>';
     return html;
-  }
-
-  async function callClaude(systemPrompt, messages){
-    const response = await fetch("/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ system: systemPrompt, messages })
-    });
-    if (!response.ok) {
-      let msg = "Ошибка запроса к модели (" + response.status + ")";
-      try { const data = await response.json(); if (data && data.error) msg = data.error; } catch(e){}
-      throw new Error(msg);
-    }
-    const data = await response.json();
-    if (!data.text) throw new Error("Пустой ответ от модели");
-    return data.text;
-  }
-
-  function agentMessagesFromDialog(){
-    return state.dialogMessages.map(m => ({ role: m.role === "client" ? "user" : "assistant", content: m.text }));
-  }
-  function clientSimMessagesFromDialog(){
-    // From the client-simulator's point of view: bot messages are incoming ("user"), client messages are its own past replies ("assistant")
-    return state.dialogMessages.map(m => ({ role: m.role === "bot" ? "user" : "assistant", content: m.text }));
-  }
-
-  async function sendClientMessage(area, text){
-    if (!text || !text.trim() || state.dialogLoading) return;
-    state.dialogMessages.push({ role:"client", text: text.trim() });
-    state.dialogLoading = true; state.dialogError = "";
-    renderDialogBody(area);
-    try {
-      const promptText = buildPrompt(state.answers, buildFunctionSpec(state.answers).primary.name);
-      const reply = await callClaude(promptText, agentMessagesFromDialog());
-      state.dialogMessages.push({ role:"bot", text: reply });
-    } catch(e){
-      state.dialogError = "Не удалось получить ответ агента: " + e.message;
-    }
-    state.dialogLoading = false;
-    renderDialogBody(area);
-  }
-
-  async function autoPlayDialog(area){
-    if (state.dialogLoading) return;
-    const promptText = buildPrompt(state.answers, buildFunctionSpec(state.answers).primary.name);
-    const companyName = (state.answers.company_name||"компании").trim();
-    const companyDesc = (state.answers.company||"").trim();
-    const clientSystem = `Ты играешь роль потенциального клиента, который пишет в чат компании «${companyName}» (${companyDesc}). Веди себя реалистично: спрашивай то, что естественно для такого бизнеса, иногда сомневайся или возражай. Пиши от первого лица, коротко (1–2 предложения), как в мессенджере. Никогда не упоминай, что ты ИИ или что это симуляция — просто общайся как обычный человек.`;
-
-    const TURNS = 4;
-    for (let i = 0; i < TURNS; i++){
-      if (state.dialogLoading === "stop") break;
-      state.dialogLoading = true; state.dialogError = "";
-      renderDialogBody(area);
-      try {
-        let clientMsg;
-        if (state.dialogMessages.length === 0){
-          clientMsg = await callClaude(clientSystem, [{ role:"user", content:"Напиши первое сообщение, с которого ты, как клиент, начинаешь переписку с этой компанией." }]);
-        } else {
-          clientMsg = await callClaude(clientSystem, clientSimMessagesFromDialog());
-        }
-        state.dialogMessages.push({ role:"client", text: clientMsg });
-        renderDialogBody(area);
-
-        const botMsg = await callClaude(promptText, agentMessagesFromDialog());
-        state.dialogMessages.push({ role:"bot", text: botMsg });
-      } catch(e){
-        state.dialogError = "Не удалось воспроизвести диалог: " + e.message;
-        state.dialogLoading = false;
-        renderDialogBody(area);
-        return;
-      }
-      state.dialogLoading = false;
-      renderDialogBody(area);
-    }
   }
 
   function render(){
@@ -548,7 +454,6 @@ ${companyName} — ${company}`;
         <div class="result-tabs">
           <div class="result-tab ${state.resultTab==='prompt'?'active':''}" id="tabPrompt">Промпт</div>
           <div class="result-tab ${state.resultTab==='function'?'active':''}" id="tabFunction">Функции</div>
-          <div class="result-tab ${state.resultTab==='dialog'?'active':''}" id="tabDialog">Диалог</div>
         </div>
         <div id="resultBody"></div>
       </div>
@@ -646,64 +551,10 @@ ${companyName} — ${company}`;
         document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
       });
       document.getElementById("editBtn2").addEventListener("click", () => { state.finished = false; state.step = QUESTIONS.length-1; render(); });
-    } else if (state.resultTab === "dialog") {
-      body.innerHTML = `
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
-          <div>
-            <div class="section-title">Тестовый диалог</div>
-            <div class="section-sub" style="margin-bottom:0;">Проверьте, как агент отвечает по собранному промпту — напишите сообщение сами или запустите автовоспроизведение.</div>
-          </div>
-        </div>
-        <div id="dialogInner"></div>
-      `;
-      renderDialogBody(area);
     }
 
     document.getElementById("tabPrompt").addEventListener("click", () => { state.resultTab = "prompt"; renderDone(area); });
     document.getElementById("tabFunction").addEventListener("click", () => { state.resultTab = "function"; renderDone(area); });
-    document.getElementById("tabDialog").addEventListener("click", () => { state.resultTab = "dialog"; renderDone(area); });
-  }
-
-  function renderDialogBody(area){
-    const inner = document.getElementById("dialogInner");
-    if (!inner) return;
-
-    let msgsHtml = "";
-    if (!state.dialogMessages.length){
-      msgsHtml = `<div class="chat-empty">Диалог ещё не начат.<br>Напишите первое сообщение как клиент или нажмите «Воспроизвести пример».</div>`;
-    } else {
-      state.dialogMessages.forEach(m => {
-        msgsHtml += `<div class="msg ${m.role}"><div class="msg-role">${m.role==='client' ? 'Клиент' : 'Агент'}</div>${esc(m.text)}</div>`;
-      });
-    }
-    if (state.dialogLoading === true){
-      msgsHtml += `<div class="typing"><span></span><span></span><span></span></div>`;
-    }
-
-    inner.innerHTML = `
-      <div class="chat-window" id="chatWindow">${msgsHtml}</div>
-      ${state.dialogError ? `<div class="chat-error">${esc(state.dialogError)}</div>` : ""}
-      <div class="chat-inputrow">
-        <input type="text" id="chatInput" placeholder="Напишите сообщение как клиент..." ${state.dialogLoading ? "disabled":""}>
-        <button class="btn-primary" id="chatSendBtn" ${state.dialogLoading ? "disabled":""}>Отправить</button>
-      </div>
-      <div class="btnrow" style="margin-top:12px;">
-        <button class="btn-outline" id="autoPlayBtn" ${state.dialogLoading ? "disabled":""}>${SPARK}Воспроизвести пример диалога</button>
-        <button class="btn-text" id="resetDialogBtn" ${state.dialogLoading ? "disabled":""}>Очистить диалог</button>
-      </div>
-    `;
-
-    const cw = document.getElementById("chatWindow");
-    cw.scrollTop = cw.scrollHeight;
-
-    const input = document.getElementById("chatInput");
-    const send = () => { const v = input.value; input.value = ""; sendClientMessage(area, v); };
-    document.getElementById("chatSendBtn").addEventListener("click", send);
-    input.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
-    document.getElementById("autoPlayBtn").addEventListener("click", () => autoPlayDialog(area));
-    document.getElementById("resetDialogBtn").addEventListener("click", () => {
-      state.dialogMessages = []; state.dialogError = ""; renderDialogBody(area);
-    });
   }
 
   render();
