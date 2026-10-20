@@ -502,7 +502,7 @@ button.it:hover { filter: brightness(1.1); }
     <div class="rewards" id="rewards"></div>
   </section>
 
-  <p class="note">Демо-версия: монеты виртуальные, их нельзя купить или вывести. Цены предметов условные. Изображения предметов — Valve / Steam.</p>
+  <p class="note">Симуляция: монеты виртуальные (1 монета ≈ 1 ₽), их нельзя купить или вывести. Цены предметов — рынок Steam, пересчёт по 82 ₽ за $. Изображения предметов — Valve / Steam.</p>
 </main>
 
 <div class="overlay" id="overlay" hidden>
@@ -589,7 +589,7 @@ let shown = S.bal;
 function wallet() {
   const el = $('#bal'), from = shown, to = S.bal; shown = to;
   const t0 = performance.now(), d = reduced ? 1 : 450;
-  const f = now => { const k = Math.min(1, (now - t0) / d); const v = from + (to - from) * (1 - Math.pow(1 - k, 3)); el.innerHTML = `<svg class="coin" viewBox="0 0 20 20"><use href="#i-coin"/></svg>${v.toFixed(2)}`; if (k < 1) requestAnimationFrame(f); };
+  const f = now => { const k = Math.min(1, (now - t0) / d); const v = from + (to - from) * (1 - Math.pow(1 - k, 3)); el.innerHTML = `<svg class="coin" viewBox="0 0 20 20"><use href="#i-coin"/></svg>${v.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`; if (k < 1) requestAnimationFrame(f); };
   requestAnimationFrame(f);
   $$('.snd-btn').forEach(b => b.setAttribute('aria-pressed', S.sound));
 }
@@ -635,7 +635,15 @@ function seedFeed() {
   for (let i = 0; i < 12; i++) { let it; do { it = roll(fakeCase()); } while (feedMode === 'top' && it.price < 1000); pushDrop(it, false, false); }
 }
 function feedLoop() { pushDrop(roll(fakeCase()), false); setTimeout(feedLoop, 1500 + rnd() * 2500); }
-setInterval(() => { const el = $('#online'); const v = 5700 + Math.floor(rnd() * 400); el.textContent = v.toLocaleString('ru-RU'); }, 5000);
+// online drifts by a few people at a time, pulled gently back toward ~5 900
+let online = 5850 + Math.floor(rnd() * 80);
+$('#online').textContent = online.toLocaleString('ru-RU');
+(function drift() {
+  const step = 1 + Math.floor(rnd() * 4), pull = online > 5950 ? .35 : online < 5800 ? .65 : .5;
+  online += rnd() < pull ? step : -step;
+  $('#online').textContent = online.toLocaleString('ru-RU');
+  setTimeout(drift, 1500 + rnd() * 2500);
+})();
 
 /* ---------- routing ---------- */
 let view = 'cases', cur = null, busy = false;
@@ -686,7 +694,13 @@ function renderCases() {
     `<div class="armory"><div class="armory-in"><div class="armory-head"><h2 class="sec-title">MoonCase Armory Cases</h2><span class="armory-flag">ARMORY</span></div>
       <div class="arm-grid">${arm.map(c => armCard(c, big.has(c.id))).join('')}</div></div></div>` +
     box('Цветная коллекция', sec('color')) +
-    box('Limited', sec('limited'));
+    box('Limited', sec('limited')) +
+    box('Наши сборки', sec('ours')) +
+    box('Специальная коллекция', sec('special')) +
+    box('Дешевые', sec('cheap')) +
+    box('Редкость', sec('rarity')) +
+    box('Люкс', sec('lux')) +
+    box('Премиум', sec('premium'));
 }
 setInterval(() => $$('[data-timer]').forEach(e => e.textContent = left()), 30000);
 
